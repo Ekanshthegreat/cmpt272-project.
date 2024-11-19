@@ -1,11 +1,14 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import * as React from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -13,18 +16,20 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
+
+// Define admin credentials
+const ADMIN_USERNAME = "admin";
+const ADMIN_PASSWORD_HASH = "e10adc3949ba59abbe56e057f20f883e"; // Example MD5 hash for "123456"
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -33,25 +38,57 @@ const formSchema = z.object({
   password: z.string().min(6, {
     message: "Password must be at least 6 characters.",
   }),
-})
+});
 
 export default function CardWithForm() {
+  const [showAlert, setShowAlert] = React.useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
       password: "",
     },
-  })
+  });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function hashPassword(password: string): Promise<string> {
+    type HashifyResponse = { Digest: string }; // Define the expected structure of the response
+
+    try {
+      const response = await fetch(
+        `https://api.hashify.net/hash/md5/hex?value=${password}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to hash password with Hashify");
+      }
+
+      const data: HashifyResponse = await response.json(); // Use the defined type for response
+      return data.Digest;
+    } catch (error) {
+      console.error("Hashify API Error:", error);
+      // Return an empty string if the API fails
+      return "";
+    }
+  }
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const { username, password } = values;
+
+    // Hash the input password
+    const hashedPassword = await hashPassword(password);
+
+    // Validate username and hashed password
+    if (username === ADMIN_USERNAME && hashedPassword === ADMIN_PASSWORD_HASH) {
+      alert("Login successful!");
+      setShowAlert(false);
+    } else {
+      setShowAlert(true);
+    }
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center min-h-screen space-y-4">
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle>Admin Login</CardTitle>
@@ -81,7 +118,12 @@ export default function CardWithForm() {
                     <FormItem>
                       <FormLabel htmlFor="password">Password</FormLabel>
                       <FormControl>
-                        <Input id="password" placeholder="Password" {...field} />
+                        <Input
+                          id="password"
+                          placeholder="Password"
+                          type="password"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -96,6 +138,15 @@ export default function CardWithForm() {
           </Form>
         </CardContent>
       </Card>
+      {showAlert && (
+        <Alert variant="destructive" className="w-[350px] py-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            Invalid username or password. Please try again.
+          </AlertDescription>
+        </Alert>
+      )}
     </div>
-  )
+  );
 }
