@@ -6,15 +6,21 @@ import Link from "next/link";
 import { useAuth } from "@/app/login/auth-context";
 
 export default function Home() {
-  const { loggedIn } = useAuth();
+  const { loggedIn, logout} = useAuth();
 
   return (
     <div>
       <ModeToggle />
-      {loggedIn && <p>Logged in!</p>}
-      <Link href="/login">
-        <Button>Login</Button>
-      </Link>
+      {loggedIn ? (
+        <>
+          <p>Logged in!</p>
+          <Button onClick={logout}>Logout</Button>
+        </>
+      ) : (
+        <Link href="/login">
+          <Button>Login</Button>
+        </Link>
+      )}
     </div>
   );
 }
