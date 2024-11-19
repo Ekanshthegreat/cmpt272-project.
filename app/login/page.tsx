@@ -8,6 +8,8 @@ import { z } from "zod";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -29,7 +31,8 @@ import {
 
 // Define admin credentials
 const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD_HASH = "e10adc3949ba59abbe56e057f20f883e"; // Example MD5 hash for "123456"
+// Example MD5 hash for "123456"
+const ADMIN_PASSWORD_HASH = "e10adc3949ba59abbe56e057f20f883e"; 
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -52,7 +55,7 @@ export default function CardWithForm() {
   });
 
   async function hashPassword(password: string): Promise<string> {
-    type HashifyResponse = { Digest: string }; // Define the expected structure of the response
+    type HashifyResponse = { Digest: string };
 
     try {
       const response = await fetch(
@@ -63,7 +66,7 @@ export default function CardWithForm() {
         throw new Error("Failed to hash password with Hashify");
       }
 
-      const data: HashifyResponse = await response.json(); // Use the defined type for response
+      const data: HashifyResponse = await response.json();
       return data.Digest;
     } catch (error) {
       console.error("Hashify API Error:", error);
@@ -80,7 +83,7 @@ export default function CardWithForm() {
 
     // Validate username and hashed password
     if (username === ADMIN_USERNAME && hashedPassword === ADMIN_PASSWORD_HASH) {
-      alert("Login successful!");
+      alert("Login successful!");      
       setShowAlert(false);
     } else {
       setShowAlert(true);
@@ -131,7 +134,7 @@ export default function CardWithForm() {
                 />
               </div>
               <CardFooter className="flex justify-between">
-                <Button variant="outline">Back</Button>
+                 <Link href="../"><Button variant="outline" type="button">Back</Button></Link>
                 <Button type="submit">Login</Button>
               </CardFooter>
             </form>
