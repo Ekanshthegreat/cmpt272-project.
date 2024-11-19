@@ -4,11 +4,13 @@ import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/login/auth-context";
+
+import Link from "next/link";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-
-import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,8 +33,7 @@ import {
 
 // Define admin credentials
 const ADMIN_USERNAME = "admin";
-// Example MD5 hash for "123456"
-const ADMIN_PASSWORD_HASH = "e10adc3949ba59abbe56e057f20f883e"; 
+const ADMIN_PASSWORD_HASH = "e10adc3949ba59abbe56e057f20f883e"; // Example MD5 hash for "123456"
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -45,6 +46,8 @@ const formSchema = z.object({
 
 export default function CardWithForm() {
   const [showAlert, setShowAlert] = React.useState(false);
+  const router = useRouter();
+  const { setLoggedIn } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -83,8 +86,10 @@ export default function CardWithForm() {
 
     // Validate username and hashed password
     if (username === ADMIN_USERNAME && hashedPassword === ADMIN_PASSWORD_HASH) {
-      alert("Login successful!");      
+      // alert("Login successful!");
       setShowAlert(false);
+      setLoggedIn(true);
+      router.push("/"); // Navigate back to the home page
     } else {
       setShowAlert(true);
     }
@@ -134,7 +139,11 @@ export default function CardWithForm() {
                 />
               </div>
               <CardFooter className="flex justify-between">
-                 <Link href="../"><Button variant="outline" type="button">Back</Button></Link>
+                <Link href="../">
+                  <Button variant="outline" type="button">
+                    Back
+                  </Button>
+                </Link>
                 <Button type="submit">Login</Button>
               </CardFooter>
             </form>
