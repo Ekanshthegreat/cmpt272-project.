@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import { AuthProvider } from "@/app/login/auth-context";
+import Header from "@/components/header";
 
 
 const geistSans = localFont({
@@ -38,7 +39,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <header>
+              <Header />
+            </header>
+            
+            <main>
+              {children}
+            </main>
+            
+            
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
