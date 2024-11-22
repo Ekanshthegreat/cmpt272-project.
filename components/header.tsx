@@ -21,8 +21,8 @@ export default function Header() {
 
 
             <div className="mr-3 gap-2 ">
-                <Link href="/nutrition">
-                    <Button variant="ghost" className="text-md">Nutrition</Button>
+                <Link href="/form">
+                    <Button variant="ghost" className="text-md">Form</Button>
                 </Link>
                 {loggedIn ? (
                     <>
