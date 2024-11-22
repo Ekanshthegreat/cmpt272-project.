@@ -20,15 +20,15 @@ export default function Header() {
             </Link>
 
 
-            <div className="mr-3 gap-2 ">
+            <div className="mr-3 gap-2 flex ">
                 <Link href="/form">
                     <Button variant="ghost" className="text-md">Form</Button>
                 </Link>
                 {loggedIn ? (
-                    <>
-                    <p>Logged in!</p>
-                    <Button onClick={logout}>Logout</Button>
-                    </>
+                    <div className="flex gap-2 items-center">
+                        <p>Logged in!</p>
+                        <Button variant="ghost" onClick={logout} className="text-md">Logout</Button>
+                    </div>
                 ) : (
                     <Link href="/login">
                     <Button variant="ghost" className="text-md">Login</Button>
