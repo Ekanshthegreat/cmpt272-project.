@@ -10,7 +10,9 @@ export default function Home() {
 
   return (
     <div>
-      <ModeToggle />
+      <h1>Home</h1>
+
+      {/* <ModeToggle />
       {loggedIn ? (
         <>
           <p>Logged in!</p>
@@ -20,7 +22,7 @@ export default function Home() {
         <Link href="/login">
           <Button>Login</Button>
         </Link>
-      )}
+      )} */}
     </div>
   );
 }
