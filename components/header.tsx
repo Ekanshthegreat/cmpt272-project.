@@ -21,6 +21,9 @@ export default function Header() {
 
 
             <div className="mr-3 gap-2 flex ">
+                <Link href="/testpage">
+                    <Button variant="ghost" className="text-md">Test</Button>
+                </Link>
                 <Link href="/form">
                     <Button variant="ghost" className="text-md">Form</Button>
                 </Link>

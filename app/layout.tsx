@@ -44,7 +44,7 @@ export default function RootLayout({
               <Header />
             </header>
             
-            <main>
+            <main className="relative flex justify-center min-h-screen">
               {children}
             </main>
             
