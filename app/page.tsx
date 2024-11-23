@@ -38,7 +38,7 @@ export default function Home() {
   };
 
   return (
-    <div className="container space-y-8 py-8">
+    <div className="container space-y-8 py-8" style={{ minHeight: '100vh', overflowY: 'auto' }}>
       <h1 className="text-xl font-bold mb-4">Emergency Reports</h1>
 
       {/* Map Section */}
@@ -47,7 +47,9 @@ export default function Home() {
       </AspectRatio>
 
       {/* Emergency Table */}
-      <EmergencyTable />
+      <div className="mt-8">
+        <EmergencyTable />
+      </div>
     </div>
   );
 }
