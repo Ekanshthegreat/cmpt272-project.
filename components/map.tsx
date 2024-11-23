@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import L, { Map as LeafletMap } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-interface Report {
+interface ReportDTO {
   id: string;
   title: string;
   description: string;
@@ -12,7 +12,7 @@ interface Report {
 }
 
 interface MapContainerProps {
-  reports: Report[];
+  reports: ReportDTO[];
   onPinClick: (id: string) => void;
 }
 
