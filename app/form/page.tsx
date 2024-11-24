@@ -1,42 +1,69 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { v4 as uuidv4 } from 'uuid';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { EmergencyType, ReportStatus, Report } from '@/types/Report';
+import { EmergencyType, ReportStatus, Report } from "@/types/Report";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
 
 export default function ReportEmergency() {
   const router = useRouter();
-  const [formData, setFormData] = useState<Omit<Report, 'reportId' | 'timeDate' | 'status'>>({
-    reporterName: '',
-    reporterPhone: '',
+  const [formData, setFormData] = useState<
+    Omit<Report, "reportId" | "timeDate" | "status">
+  >({
+    reporterName: "",
+    reporterPhone: "",
     emergencyType: EmergencyType.OTHER,
     location: {
-      address: '',
-      placeName: '',
+      address: "",
+      placeName: "",
       coordinates: {
         latitude: 0, // Initialize as valid numbers
         longitude: 0, // Initialize as valid numbers
       },
     },
-    pictureUrl: '',
-    comments: '',
+    pictureUrl: "",
+    comments: "",
   });
+  const [showDialog, setShowDialog] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       location: { ...prev.location, [name]: value },
     }));
@@ -45,13 +72,19 @@ export default function ReportEmergency() {
   const handleCoordinatesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const parsedValue = parseFloat(value) || 0;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       location: {
         ...prev.location,
         coordinates: {
-          latitude: name === 'latitude' ? parsedValue : (prev.location.coordinates?.latitude ?? 0),
-          longitude: name === 'longitude' ? parsedValue : (prev.location.coordinates?.longitude ?? 0),
+          latitude:
+            name === "latitude"
+              ? parsedValue
+              : prev.location.coordinates?.latitude ?? 0,
+          longitude:
+            name === "longitude"
+              ? parsedValue
+              : prev.location.coordinates?.longitude ?? 0,
         },
       },
     }));
@@ -67,16 +100,22 @@ export default function ReportEmergency() {
     };
 
     // Get existing reports from localStorage
-    const existingReports: Report[] = JSON.parse(localStorage.getItem('emergencyReports') || '[]');
+    const existingReports: Report[] = JSON.parse(
+      localStorage.getItem("emergencyReports") || "[]"
+    );
 
     // Add new report to the array
     const updatedReports = [...existingReports, newReport];
 
     // Save updated reports back to localStorage
-    localStorage.setItem('emergencyReports', JSON.stringify(updatedReports));
+    localStorage.setItem("emergencyReports", JSON.stringify(updatedReports));
 
-    alert('Emergency report submitted successfully!');
-    router.push('/'); // Redirect to home page after submission
+    setShowDialog(true); // Show the dialog
+  };
+
+  const handleDialogClose = () => {
+    setShowDialog(false);
+    router.push("/"); // Redirect to home page after closing the dialog
   };
 
   return (
@@ -84,7 +123,9 @@ export default function ReportEmergency() {
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>Report New Emergency</CardTitle>
-          <CardDescription>Please fill out the form below to report an emergency.</CardDescription>
+          <CardDescription>
+            Please fill out the form below to report an emergency.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -112,14 +153,21 @@ export default function ReportEmergency() {
               <div>
                 <Label htmlFor="emergencyType">Nature of Emergency</Label>
                 <Select
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, emergencyType: value as EmergencyType }))}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      emergencyType: value as EmergencyType,
+                    }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select emergency type" />
                   </SelectTrigger>
                   <SelectContent>
                     {Object.values(EmergencyType).map((type) => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -151,7 +199,9 @@ export default function ReportEmergency() {
                     name="latitude"
                     type="number"
                     step="any"
-                    value={formData.location.coordinates?.latitude?.toString() || '0'} // Ensure it's a string
+                    value={
+                      formData.location.coordinates?.latitude?.toString() || "0"
+                    } // Ensure it's a string
                     onChange={handleCoordinatesChange}
                   />
                 </div>
@@ -162,7 +212,9 @@ export default function ReportEmergency() {
                     name="longitude"
                     type="number"
                     step="any"
-                    value={formData.location.coordinates?.longitude?.toString() || 0} // Ensure it's a string
+                    value={
+                      formData.location.coordinates?.longitude?.toString() || 0
+                    } // Ensure it's a string
                     onChange={handleCoordinatesChange}
                   />
                 </div>
@@ -190,9 +242,29 @@ export default function ReportEmergency() {
           </form>
         </CardContent>
         <CardFooter>
-          <Button type="submit" onClick={handleSubmit} className="w-full">Submit Report</Button>
+          <Button type="submit" onClick={handleSubmit} className="w-full">
+            Submit Report
+          </Button>
         </CardFooter>
       </Card>
+
+      {/* Alert Dialog */}
+      <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
+        <AlertDialogTrigger asChild>
+          <Button className="hidden">Open Dialog</Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Report Submitted</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your emergency report has been submitted successfully!
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button onClick={handleDialogClose}>OK</Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
