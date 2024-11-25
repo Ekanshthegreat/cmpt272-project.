@@ -122,7 +122,15 @@ export default function Home() {
       className="container space-y-8 py-8"
       style={{ minHeight: "100vh", overflowY: "auto" }}
     >
-      <h1 className="text-xl font-bold mb-4">Emergency Reports</h1>
+      {/* <h1 className="text-3xl font-bold mb-20 text-center">
+        EMERGENCY REPORTS
+      </h1> */}
+      <h1 className="mb-4 text-4xl text-center font-extrabold leading-none tracking-tight md:text-5xl lg:text-6xl">
+        EMERGENCY REPORTS
+      </h1>
+      <p className="mb-6 text-lg text-center font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
+        Reportings of emergencies in the Metro Vancouver area.
+      </p>
 
       {/* Map Section */}
       <AspectRatio ratio={16 / 9} className="bg-muted">
