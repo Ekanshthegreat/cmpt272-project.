@@ -10,7 +10,6 @@ import { useAuth } from "@/app/login/auth-context";
 
 export default function Header() {
   const { loggedIn, logout } = useAuth();
-
   return (
     <div className="flex items-center justify-between m-5 h-16 rounded-full border shadow-lg">
       <Link href="/" className="flex ml-6 gap-2">
@@ -23,11 +22,6 @@ export default function Header() {
         <Link href="/">
           <Button variant="ghost" className="text-md">
             Home
-          </Button>
-        </Link>
-        <Link href="/form">
-          <Button variant="ghost" className="text-md">
-            Report
           </Button>
         </Link>
         <Link href="/form">

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import EmergencyTable from "@/components/emergency-table";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Report, EmergencyType, ReportStatus } from "@/types/Report";
+import { Separator } from "@/components/ui/separator";
 
 // Dynamically import MapContainer
 const Map = dynamic(() => import("@/components/map"), {
@@ -125,15 +126,23 @@ export default function Home() {
       {/* <h1 className="text-3xl font-bold mb-20 text-center">
         EMERGENCY REPORTS
       </h1> */}
-      <h1 className="mb-4 text-4xl text-center font-extrabold leading-none tracking-tight md:text-5xl lg:text-6xl">
-        EMERGENCY REPORTS
+      <h1 className="mb-4 mt-16 text-4xl text-center font-extrabold leading-none tracking-tight md:text-5xl lg:text-6xl">
+        <mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-600">
+          EMERGENCY
+        </mark>{" "}
+        REPORTS
       </h1>
-      <p className="mb-6 text-lg text-center font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
+      <p className="mb-10 text-lg text-center font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
         Reportings of emergencies in the Metro Vancouver area.
       </p>
 
+      <div className="flex justify-center">
+        <Separator className="w-1/3" />
+      </div>
+
       {/* Map Section */}
-      <AspectRatio ratio={16 / 9} className="bg-muted">
+
+      <AspectRatio ratio={16 / 9} className="dark:bg-muted m-10 shadow-2xl ">
         <Map reports={reportDTOs} onPinClick={handlePinClick} />
       </AspectRatio>
 

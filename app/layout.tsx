@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 import { AuthProvider } from "@/app/login/auth-context";
 import Header from "@/components/header";
-
+import Footer from "@/components/footer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,7 +33,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-         <ThemeProvider
+        <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
@@ -43,13 +43,14 @@ export default function RootLayout({
             <header>
               <Header />
             </header>
-            
+
             <main className="relative flex justify-center min-h-screen">
               {children}
             </main>
-            
-            
           </AuthProvider>
+          <footer>
+            <Footer />
+          </footer>
         </ThemeProvider>
       </body>
     </html>
