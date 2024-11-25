@@ -34,6 +34,7 @@ import {
 
 interface EmergencyTableProps {
   reports: Report[];
+  onReportClick: (id: string) => void;
 }
 
 type SortOrder = "asc" | "desc";
@@ -49,7 +50,10 @@ function sortByKey<T>(array: T[], key: string, order: SortOrder = "asc"): T[] {
   });
 }
 
-export default function EmergencyTable({ reports }: EmergencyTableProps) {
+export default function EmergencyTable({
+  reports,
+  onReportClick,
+}: EmergencyTableProps) {
   const { loggedIn } = useAuth();
   const [emergencies, setEmergencies] = useState<Report[]>(reports);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
@@ -155,7 +159,11 @@ export default function EmergencyTable({ reports }: EmergencyTableProps) {
           </TableHeader>
           <TableBody>
             {emergencies.map((emergency) => (
-              <TableRow key={emergency.reportId}>
+              <TableRow
+                className="cursor-pointer"
+                key={emergency.reportId}
+                onClick={() => onReportClick(emergency.reportId)}
+              >
                 <TableCell>{emergency.location.address}</TableCell>
                 <TableCell>{emergency.emergencyType}</TableCell>
                 <TableCell>{emergency.timeDate.toLocaleString()}</TableCell>

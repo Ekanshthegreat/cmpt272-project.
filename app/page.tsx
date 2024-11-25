@@ -6,6 +6,7 @@ import EmergencyTable from "@/components/emergency-table";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Report, EmergencyType, ReportStatus } from "@/types/Report";
 import { Separator } from "@/components/ui/separator";
+import DetailsCard from "@/components/details-card";
 
 // Dynamically import MapContainer
 const Map = dynamic(() => import("@/components/map"), {
@@ -39,6 +40,9 @@ function transformReportToDTO(report: Report): ReportDTO | null {
 export default function Home() {
   const [reports, setReports] = React.useState<Report[]>([]);
   const [reportDTOs, setReportDTOs] = React.useState<ReportDTO[]>([]);
+  const [selectedReport, setSelectedReport] = React.useState<Report | null>(
+    null
+  );
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -115,7 +119,21 @@ export default function Home() {
   }, [reports]); // Runs whenever 'reports' changes
 
   const handlePinClick = (id: string) => {
-    alert(`Pin clicked for report ID: ${id}`);
+    console.log(`Pin clicked for report ID: ${id}`);
+    const report = reports.find((report) => report.reportId === id);
+    if (report) {
+      console.log("Selected report:", report);
+      setSelectedReport(report);
+    }
+  };
+
+  const handleReportClick = (id: string) => {
+    console.log(`Report clicked for report ID: ${id}`);
+    const report = reports.find((report) => report.reportId === id);
+    if (report) {
+      console.log("Selected report:", report);
+      setSelectedReport(report);
+    }
   };
 
   return (
@@ -123,9 +141,6 @@ export default function Home() {
       className="container space-y-8 py-8"
       style={{ minHeight: "100vh", overflowY: "auto" }}
     >
-      {/* <h1 className="text-3xl font-bold mb-20 text-center">
-        EMERGENCY REPORTS
-      </h1> */}
       <h1 className="mb-4 mt-16 text-4xl text-center font-extrabold leading-none tracking-tight md:text-5xl lg:text-6xl">
         <mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-600">
           EMERGENCY
@@ -140,15 +155,24 @@ export default function Home() {
         <Separator className="w-1/3" />
       </div>
 
-      {/* Map Section */}
+      {/* this div makes it so that the card is placed relative to the map */}
+      <div className="relative">
+        {/* Details Card */}
+        {selectedReport && (
+          <div className="absolute bottom-16 left-16 shadow-2xl z-[100000] w-1/3 ">
+            <DetailsCard report={selectedReport} />
+          </div>
+        )}
 
-      <AspectRatio ratio={16 / 9} className="dark:bg-muted m-10 shadow-2xl ">
-        <Map reports={reportDTOs} onPinClick={handlePinClick} />
-      </AspectRatio>
+        {/* Map Section */}
+        <AspectRatio ratio={16 / 9} className="dark:bg-muted m-10 shadow-2xl">
+          <Map reports={reportDTOs} onPinClick={handlePinClick} />
+        </AspectRatio>
+      </div>
 
       {/* Emergency Table */}
       <div className="mt-8">
-        <EmergencyTable reports={reports} />
+        <EmergencyTable reports={reports} onReportClick={handleReportClick} />
       </div>
     </div>
   );
