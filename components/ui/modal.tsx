@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Button } from "./button";
+import { XIcon } from "lucide-react";
 
 interface ModalProps {
     isOpen: boolean;
@@ -19,12 +21,12 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
                 className="bg-white rounded-lg shadow-lg p-6 w-11/12 max-w-md"
                 onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the content
             >
-                <button
-                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                <Button
+                    className="relative bottom-2 right-1 bg-red-600 text-gray-200 hover:text-gray-400 hover:bg-red-800"
                     onClick={onClose}
                 >
-                    Close
-                </button>
+                    <XIcon size={24} color="white" />
+                </Button>
                 {children}
             </div>
         </div>,
