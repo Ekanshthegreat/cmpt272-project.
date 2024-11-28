@@ -1,17 +1,16 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import dynamic from "next/dynamic";
-import EmergencyTable from "@/components/emergency-table";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Report, EmergencyType, ReportStatus } from "@/types/Report";
-import { Separator } from "@/components/ui/separator";
-import DetailsCard from "@/components/details-card";
+import * as React from 'react';
+import dynamic from 'next/dynamic';
+import { useState, useEffect } from 'react';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import EmergencyTable from '@/components/emergency-table';
+import { Separator } from '@/components/ui/separator';
+import DetailsCard from '@/components/details-card';
+import { Report, EmergencyType, ReportStatus } from '@/types/Report';
 
 // Dynamically import MapContainer
-const Map = dynamic(() => import("@/components/map"), {
-  ssr: false, // Prevent server-side rendering
-});
+const Map = dynamic(() => import('@/components/map'), { ssr: false });
 
 interface ReportDTO {
   id: string;
@@ -32,106 +31,87 @@ function transformReportToDTO(report: Report): ReportDTO | null {
       coordinates: [latitude, longitude],
     };
   }
-
-  // Return null if coordinates are missing
-  return null;
+  return null; // Return null if coordinates are missing
 }
 
 export default function Home() {
-  const [reports, setReports] = React.useState<Report[]>([]);
-  const [reportDTOs, setReportDTOs] = React.useState<ReportDTO[]>([]);
-  const [selectedReport, setSelectedReport] = React.useState<Report | null>(
-    null
-  );
+  const [reports, setReports] = useState<Report[]>([]);
+  const [reportDTOs, setReportDTOs] = useState<ReportDTO[]>([]);
+  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
 
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedReports = localStorage.getItem("emergencyReports");
+  useEffect(() => {
+    // Load reports from localStorage or initialize default
+    if (typeof window !== 'undefined') {
+      const storedReports = localStorage.getItem('emergencyReports');
       if (storedReports) {
         setReports(JSON.parse(storedReports));
       } else {
-        // Default reports if nothing is in localStorage
+        // Default reports
         const defaultReports: Report[] = [
           {
-            reporterName: "John Doe",
-            reporterPhone: "123-456-7890",
+            reporterName: 'John Doe',
+            reporterPhone: '123-456-7890',
             emergencyType: EmergencyType.SHOOTING,
             location: {
-              address: "Metrotown",
-              coordinates: {
-                latitude: 49.2258,
-                longitude: -123.0036,
-              },
+              address: 'Metrotown',
+              coordinates: { latitude: 49.2258, longitude: -123.0036 },
             },
-            comments: "A shooting incident was reported at Metrotown.",
-            reportId: "1",
+            comments: 'A shooting incident was reported at Metrotown.',
+            reportId: '1',
             timeDate: new Date(),
             status: ReportStatus.OPEN,
           },
           {
-            reporterName: "Jane Doe",
-            reporterPhone: "123-456-7890",
+            reporterName: 'Jane Doe',
+            reporterPhone: '123-456-7890',
             emergencyType: EmergencyType.MEDICAL,
             location: {
-              address: "SFU Burnaby",
-              coordinates: {
-                latitude: 49.2781,
-                longitude: -122.9199,
-              },
+              address: 'SFU Burnaby',
+              coordinates: { latitude: 49.2781, longitude: -122.9199 },
             },
-            comments: "A medical emergency occurred at SFU Burnaby.",
-            reportId: "2",
+            comments: 'A medical emergency occurred at SFU Burnaby.',
+            reportId: '2',
             timeDate: new Date(),
             status: ReportStatus.OPEN,
           },
           {
-            reporterName: "John Smith",
-            reporterPhone: "123-456-7890",
+            reporterName: 'John Smith',
+            reporterPhone: '123-456-7890',
             emergencyType: EmergencyType.OTHER,
             location: {
-              address: "SFU Surrey",
-              coordinates: {
-                latitude: 49.1896,
-                longitude: -122.849,
-              },
+              address: 'SFU Surrey',
+              coordinates: { latitude: 49.1896, longitude: -122.849 },
             },
-            comments: "An elevator issue reported at SFU Surrey campus.",
-            reportId: "3",
+            comments: 'An elevator issue reported at SFU Surrey campus.',
+            reportId: '3',
             timeDate: new Date(),
             status: ReportStatus.OPEN,
           },
         ];
         setReports(defaultReports);
-        localStorage.setItem(
-          "emergencyReports",
-          JSON.stringify(defaultReports)
-        );
+        localStorage.setItem('emergencyReports', JSON.stringify(defaultReports));
       }
     }
   }, []);
 
-  // Update reportDTOs whenever reports change
-  React.useEffect(() => {
+  useEffect(() => {
+    // Transform reports into DTOs
     const dtos = reports
       .map(transformReportToDTO)
-      .filter((dto): dto is ReportDTO => dto !== null);
+      .filter((dto): dto is ReportDTO => dto !== null); // Type narrowing
     setReportDTOs(dtos);
-  }, [reports]); // Runs whenever 'reports' changes
+  }, [reports]);
 
   const handlePinClick = (id: string) => {
-    console.log(`Pin clicked for report ID: ${id}`);
     const report = reports.find((report) => report.reportId === id);
     if (report) {
-      console.log("Selected report:", report);
       setSelectedReport(report);
     }
   };
 
   const handleReportClick = (id: string) => {
-    console.log(`Report clicked for report ID: ${id}`);
     const report = reports.find((report) => report.reportId === id);
     if (report) {
-      console.log("Selected report:", report);
       setSelectedReport(report);
     }
   };
@@ -149,14 +129,9 @@ export default function Home() {
   };
 
   return (
-    <div
-      className="container space-y-8 py-8"
-      style={{ minHeight: "100vh", overflowY: "auto" }}
-    >
+    <div className="container space-y-8 py-8" style={{ minHeight: '100vh', overflowY: 'auto' }}>
       <h1 className="mb-4 mt-16 text-4xl text-center font-extrabold leading-none tracking-tight md:text-5xl lg:text-6xl">
-        <mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-600">
-          EMERGENCY
-        </mark>{" "}
+        <mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-600">EMERGENCY</mark>{' '}
         REPORTS
       </h1>
       <p className="mb-10 text-lg text-center font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
@@ -167,18 +142,17 @@ export default function Home() {
         <Separator className="w-1/3" />
       </div>
 
-      {/* this div makes it so that the card is placed relative to the map */}
       <div className="relative">
         {/* Details Card */}
         {selectedReport && (
-          <div className="absolute bottom-16 left-16 shadow-2xl z-[100000] w-1/3 ">
+          <div className="absolute bottom-16 left-16 shadow-2xl z-[100000] w-1/3">
             <DetailsCard report={selectedReport} />
           </div>
         )}
 
         {/* Map Section */}
         <AspectRatio ratio={16 / 9} className="dark:bg-muted m-10 shadow-2xl">
-          <Map reports={reportDTOs} onPinClick={handlePinClick} />
+          <Map reports={reportDTOs} onPinClick={handlePinClick} highlightedReportId={selectedReport?.reportId} />
         </AspectRatio>
       </div>
 
@@ -193,4 +167,3 @@ export default function Home() {
     </div>
   );
 }
-

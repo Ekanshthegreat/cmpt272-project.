@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
-import L, { Map as LeafletMap } from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef } from 'react';
+import L, { Map as LeafletMap, Marker } from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 interface ReportDTO {
   id: string;
@@ -14,64 +14,65 @@ interface ReportDTO {
 interface MapContainerProps {
   reports: ReportDTO[];
   onPinClick: (id: string) => void;
+  highlightedReportId?: string; // Optional to highlight selected report
 }
 
-const MapContainer: React.FC<MapContainerProps> = ({ reports, onPinClick }) => {
+const MapContainer: React.FC<MapContainerProps> = ({ reports, onPinClick, highlightedReportId }) => {
   const mapRef = useRef<LeafletMap | null>(null);
+  const markersRef = useRef<Map<string, Marker>>(new Map());
 
   useEffect(() => {
+    // Initialize the map if not already done
     if (!mapRef.current) {
-      const map = L.map("map").setView([49.2276, -123.0076], 11);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      const map = L.map('map').setView([49.2276, -123.0076], 11);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
+
       map.scrollWheelZoom.disable();
-      map.on("focus", () => map.scrollWheelZoom.enable());
-      map.on("blur", () => map.scrollWheelZoom.disable());
+      map.on('focus', () => map.scrollWheelZoom.enable());
+      map.on('blur', () => map.scrollWheelZoom.disable());
       mapRef.current = map;
     }
 
-    mapRef.current.eachLayer((layer) => {
-      if ((layer as L.Layer).options?.pane === "markerPane") {
-        mapRef.current?.removeLayer(layer);
-      }
+    // Remove any existing markers
+    markersRef.current.forEach((marker) => {
+      mapRef.current?.removeLayer(marker);
     });
+    markersRef.current.clear();
 
+    // Add markers for all reports
     reports.forEach((report) => {
       const customIcon = L.icon({
-        iconUrl: "/images/marker.png", // Ensure the image is in `public/images`
+        iconUrl: '/images/marker.png', // Make sure the image exists in `public/images`
         iconSize: [25, 41],
         iconAnchor: [12, 41],
       });
 
-      // Add marker with popup
       const marker = L.marker(report.coordinates, { icon: customIcon })
         .addTo(mapRef.current!)
         .bindPopup(`<b>${report.title}</b><br>${report.description}`);
 
-      // Add event listener for click
-      marker.on("click", () => {
+      marker.on('click', () => {
         marker.openPopup();
-        // Notify parent component of click
-        onPinClick(report.id);
-      });
-      marker.on("hover", () => {
-        marker.openPopup();
-        // Notify parent component of click
         onPinClick(report.id);
       });
 
-      // Optional: Close popup on map click
-      if (mapRef.current) {
-        mapRef.current.on("click", () => {
-          marker.closePopup();
-        });
-      }
+      markersRef.current.set(report.id, marker);
     });
-  }, [reports, onPinClick]);
 
-  return <div id="map" style={{ height: "100%", width: "100%" }} />;
+    // Highlight the selected marker if `highlightedReportId` is provided
+    if (highlightedReportId) {
+      const selectedMarker = markersRef.current.get(highlightedReportId);
+      if (selectedMarker) {
+        selectedMarker.openPopup();
+        mapRef.current?.setView(selectedMarker.getLatLng(), 13); // Focus on the highlighted marker
+      }
+    }
+  }, [reports, onPinClick, highlightedReportId]);
+
+  return <div id="map" style={{ height: '100%', width: '100%' }} />;
 };
 
 export default MapContainer;
