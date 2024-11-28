@@ -185,7 +185,7 @@ export default function ReportEmergency() {
                     name="latitude"
                     type="number"
                     step="any"
-                    value={formData.location.coordinates?.latitude.toString()}
+                    value={formData.location.coordinates?.latitude.toString() || 0}
                     readOnly
                   />
                 </div>
@@ -196,12 +196,12 @@ export default function ReportEmergency() {
                     name="longitude"
                     type="number"
                     step="any"
-                    value={formData.location.coordinates?.longitude.toString()}
+                    value={formData.location.coordinates?.longitude.toString() || 0}
                     readOnly
                   />
                 </div>
                 <div>
-                  <Button onClick={() => setShowMap(true)} className="w-full">
+                  <Button type="button" onClick={() => setShowMap(true)} className="w-full">
                     Pick Location on Map
                   </Button>
                 </div>
