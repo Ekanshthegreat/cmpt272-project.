@@ -40,10 +40,14 @@ interface EmergencyTableProps {
 
 type SortOrder = "asc" | "desc";
 
-function sortByKey<T>(array: T[], key: string, order: SortOrder = "asc"): T[] {
-  return array.sort((a, b) => {
-    const aValue = key.split(".").reduce((o, i) => (o as any)[i], a);
-    const bValue = key.split(".").reduce((o, i) => (o as any)[i], b);
+function sortByKey<T>(
+  array: T[],
+  key: keyof T,
+  order: SortOrder = "asc"
+): T[] {
+  return [...array].sort((a, b) => {
+    const aValue = a[key];
+    const bValue = b[key];
 
     if (aValue < bValue) return order === "asc" ? -1 : 1;
     if (aValue > bValue) return order === "asc" ? 1 : -1;
@@ -63,14 +67,14 @@ export default function EmergencyTable({
   const [emergencyToDelete, setEmergencyToDelete] = useState<string | null>(
     null
   );
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortColumn, setSortColumn] = useState<keyof Report | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
   useEffect(() => {
     setEmergencies(reports);
   }, [reports]);
 
-  const handleSort = (column: string) => {
+  const handleSort = (column: keyof Report) => {
     const newSortOrder =
       sortColumn === column && sortOrder === "asc" ? "desc" : "asc";
     setSortColumn(column);
@@ -154,12 +158,12 @@ export default function EmergencyTable({
 
   return (
     <div>
-      <Select onValueChange={handleSort}>
+      <Select onValueChange={(value) => handleSort(value as keyof Report)}>
         <SelectTrigger className="w-[180px] m-5">
           <SelectValue placeholder="Sort By" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="location.address">Location</SelectItem>
+          <SelectItem value="location">Location</SelectItem>
           <SelectItem value="emergencyType">Type</SelectItem>
           <SelectItem value="timeDate">Time Reported</SelectItem>
           <SelectItem value="status">Status</SelectItem>
@@ -304,4 +308,3 @@ export default function EmergencyTable({
     </div>
   );
 }
-
