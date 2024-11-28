@@ -136,6 +136,18 @@ export default function Home() {
     }
   };
 
+  const handleReportUpdate = (updatedReports: Report[]) => {
+    setReports(updatedReports);
+    if (selectedReport) {
+      const updatedSelectedReport = updatedReports.find(
+        (report) => report.reportId === selectedReport.reportId
+      );
+      if (updatedSelectedReport) {
+        setSelectedReport(updatedSelectedReport);
+      }
+    }
+  };
+
   return (
     <div
       className="container space-y-8 py-8"
@@ -172,8 +184,13 @@ export default function Home() {
 
       {/* Emergency Table */}
       <div className="mt-8">
-        <EmergencyTable reports={reports} onReportClick={handleReportClick} />
+        <EmergencyTable
+          reports={reports}
+          onReportClick={handleReportClick}
+          onReportUpdate={handleReportUpdate}
+        />
       </div>
     </div>
   );
 }
+

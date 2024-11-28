@@ -13,7 +13,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/app/login/auth-context";
 import { X, CheckCircle } from "lucide-react";
-import { Report, ReportStatus } from "@/types/Report";
+import { Report, ReportStatus, EmergencyType } from "@/types/Report";
 import Link from "next/link";
 import {
   AlertDialog,
@@ -35,6 +35,7 @@ import {
 interface EmergencyTableProps {
   reports: Report[];
   onReportClick: (id: string) => void;
+  onReportUpdate: (updatedReports: Report[]) => void;
 }
 
 type SortOrder = "asc" | "desc";
@@ -53,6 +54,7 @@ function sortByKey<T>(array: T[], key: string, order: SortOrder = "asc"): T[] {
 export default function EmergencyTable({
   reports,
   onReportClick,
+  onReportUpdate,
 }: EmergencyTableProps) {
   const { loggedIn } = useAuth();
   const [emergencies, setEmergencies] = useState<Report[]>(reports);
@@ -96,6 +98,7 @@ export default function EmergencyTable({
       "emergencyReports",
       JSON.stringify(updatedEmergencies)
     );
+    onReportUpdate(updatedEmergencies);
   };
 
   const handleDelete = (id: string) => {
@@ -128,7 +131,25 @@ export default function EmergencyTable({
       );
       setShowConfirmDialog(false);
       setEmergencyToDelete(null);
+      onReportUpdate(updatedEmergencies);
     }
+  };
+
+  const handleTypeChange = (id: string, newType: EmergencyType) => {
+    const updatedEmergencies = emergencies.map((emergency) =>
+      emergency.reportId === id
+        ? {
+            ...emergency,
+            emergencyType: newType,
+          }
+        : emergency
+    );
+    setEmergencies(updatedEmergencies);
+    localStorage.setItem(
+      "emergencyReports",
+      JSON.stringify(updatedEmergencies)
+    );
+    onReportUpdate(updatedEmergencies);
   };
 
   return (
@@ -165,7 +186,32 @@ export default function EmergencyTable({
                 onClick={() => onReportClick(emergency.reportId)}
               >
                 <TableCell>{emergency.location.address}</TableCell>
-                <TableCell>{emergency.emergencyType}</TableCell>
+                <TableCell>
+                  {loggedIn ? (
+                    <Select
+                      onValueChange={(value) =>
+                        handleTypeChange(
+                          emergency.reportId,
+                          value as EmergencyType
+                        )
+                      }
+                      defaultValue={emergency.emergencyType}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(EmergencyType).map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    emergency.emergencyType
+                  )}
+                </TableCell>
                 <TableCell>{emergency.timeDate.toLocaleString()}</TableCell>
                 <TableCell>{emergency.status}</TableCell>
                 {loggedIn && (
@@ -258,3 +304,4 @@ export default function EmergencyTable({
     </div>
   );
 }
+
