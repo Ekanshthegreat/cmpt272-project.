@@ -96,7 +96,7 @@ export default function CardWithForm() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen space-y-4">
+    <div className="w-full flex flex-col items-center justify-center min-h-screen">
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle>Admin Login</CardTitle>
@@ -113,7 +113,11 @@ export default function CardWithForm() {
                     <FormItem>
                       <FormLabel htmlFor="username">Username</FormLabel>
                       <FormControl>
-                        <Input id="username" placeholder="Username" {...field} />
+                        <Input
+                          id="username"
+                          placeholder="Username"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

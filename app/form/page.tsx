@@ -33,6 +33,12 @@ import {
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 
+import dynamic from "next/dynamic";
+import { Modal } from "@/components/ui/modal";
+const CMap = dynamic(() => import("@/components/coordMap"), {
+  ssr: false,
+});
+
 export default function ReportEmergency() {
   const router = useRouter();
   const [formData, setFormData] = useState<
@@ -53,6 +59,7 @@ export default function ReportEmergency() {
     comments: "",
   });
   const [showDialog, setShowDialog] = useState(false);
+  const [showMap, setShowMap] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -66,27 +73,6 @@ export default function ReportEmergency() {
     setFormData((prev) => ({
       ...prev,
       location: { ...prev.location, [name]: value },
-    }));
-  };
-
-  const handleCoordinatesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const parsedValue = parseFloat(value) || 0;
-    setFormData((prev) => ({
-      ...prev,
-      location: {
-        ...prev.location,
-        coordinates: {
-          latitude:
-            name === "latitude"
-              ? parsedValue
-              : prev.location.coordinates?.latitude ?? 0,
-          longitude:
-            name === "longitude"
-              ? parsedValue
-              : prev.location.coordinates?.longitude ?? 0,
-        },
-      },
     }));
   };
 
@@ -199,10 +185,8 @@ export default function ReportEmergency() {
                     name="latitude"
                     type="number"
                     step="any"
-                    value={
-                      formData.location.coordinates?.latitude?.toString() || "0"
-                    } // Ensure it's a string
-                    onChange={handleCoordinatesChange}
+                    value={formData.location.coordinates?.latitude.toString() || 0}
+                    readOnly
                   />
                 </div>
                 <div>
@@ -212,12 +196,38 @@ export default function ReportEmergency() {
                     name="longitude"
                     type="number"
                     step="any"
-                    value={
-                      formData.location.coordinates?.longitude?.toString() || 0
-                    } // Ensure it's a string
-                    onChange={handleCoordinatesChange}
+                    value={formData.location.coordinates?.longitude.toString() || 0}
+                    readOnly
                   />
                 </div>
+                <div>
+                  <Button type="button" onClick={() => setShowMap(true)} className="w-full">
+                    Pick Location on Map
+                  </Button>
+                </div>
+
+                <Modal isOpen={showMap} onClose={() => setShowMap(false)}>
+                  <div style={{ height: '450px', width: '100%' }}>
+                    <CMap
+                      onMarkerDrop={(latitude, longitude) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          location: {
+                            ...prev.location,
+                            coordinates: { latitude, longitude },
+                          },
+                        }));
+                        setShowMap(false); // Close the modal
+                      }}
+                      center={[
+                        formData.location.coordinates?.latitude || 49.276765, // Default latitude
+                        formData.location.coordinates?.longitude || -122.917957, // Default longitude
+                      ]}
+                      markerImageUrl="/images/marker.png"
+                      zoom={13}
+                    />
+                  </div>
+                </Modal>
               </div>
               <div>
                 <Label htmlFor="pictureUrl">Picture URL (Optional)</Label>
