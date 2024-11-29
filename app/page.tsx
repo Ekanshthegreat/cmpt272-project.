@@ -31,7 +31,7 @@ function transformReportToDTO(report: Report): ReportDTO | null {
       coordinates: [latitude, longitude],
     };
   }
-  return null; // Return null if coordinates are missing
+  return null;
 }
 
 export default function Home() {
@@ -46,7 +46,11 @@ export default function Home() {
     if (typeof window !== "undefined") {
       const storedReports = localStorage.getItem("emergencyReports");
       if (storedReports) {
-        setReports(JSON.parse(storedReports));
+        const parsedReports = JSON.parse(storedReports);
+        setReports(parsedReports);
+        if (visibleReports.length === 0) {
+          setVisibleReports(parsedReports);
+        }
       } else {
         // Default reports
         const defaultReports: Report[] = [
@@ -97,6 +101,7 @@ export default function Home() {
           },
         ];
         setReports(defaultReports);
+        setVisibleReports(defaultReports);
         localStorage.setItem(
           "emergencyReports",
           JSON.stringify(defaultReports)
@@ -113,13 +118,11 @@ export default function Home() {
     setReportDTOs(dtos);
   }, [reports]);
 
-  const handlePinClick = (id: string) => {
-    const report = reports.find((report) => report.reportId === id);
-    if (report) {
-      setSelectedReport(report);
-    }
-  };
+  // Handlers ========================================
 
+  // both the table and the map will call this function
+  // Handles when a report in the table or a pin on the map is clicked
+  // Updates the selected report in the state to show details card
   const handleReportClick = (id: string) => {
     const report = reports.find((report) => report.reportId === id);
     if (report) {
@@ -127,6 +130,7 @@ export default function Home() {
     }
   };
 
+  // Handles when a report is updated in the table such as editted by the admin
   const handleReportUpdate = (updatedReports: Report[]) => {
     setReports(updatedReports);
     if (selectedReport) {
@@ -139,6 +143,9 @@ export default function Home() {
     }
   };
 
+  // Handles when a report is deleted in the table
+  // this function is placed in the parent component and not the table to update the state
+  // of the reports and visible reports
   const handleReportDelete = (id: string) => {
     const updatedReports = reports.filter((report) => report.reportId !== id);
     setReports(updatedReports);
@@ -147,6 +154,8 @@ export default function Home() {
     localStorage.setItem("emergencyReports", JSON.stringify(updatedReports));
   };
 
+  // Handles when the visible reports change on the map
+  // Updates the visible reports in the state to show in the table
   const handleVisibleReportsChange = (visibleReports: ReportDTO[]) => {
     const visibleReportIds = visibleReports.map((report) => report.id);
     const filteredReports = reports.filter((report) =>
@@ -198,7 +207,7 @@ export default function Home() {
         <AspectRatio ratio={16 / 9} className="dark:bg-muted m-10 shadow-2xl">
           <Map
             reports={reportDTOs}
-            onPinClick={handlePinClick}
+            onPinClick={handleReportClick}
             highlightedReportId={selectedReport?.reportId}
             onVisibleReportsChange={handleVisibleReportsChange}
           />
