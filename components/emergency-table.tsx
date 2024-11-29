@@ -13,7 +13,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/app/login/auth-context";
 import { X, CheckCircle } from "lucide-react";
-import { Report, ReportStatus, EmergencyType } from "@/types/Report";
+import { Report, ReportStatus, EmergencyType } from "@/types/types";
 import Link from "next/link";
 import {
   AlertDialog,
@@ -89,12 +89,12 @@ export default function EmergencyTable({
     const updatedEmergencies = emergencies.map((emergency) =>
       emergency.reportId === id
         ? {
-            ...emergency,
-            status:
-              emergency.status === ReportStatus.OPEN
-                ? ReportStatus.CLOSED
-                : ReportStatus.OPEN,
-          }
+          ...emergency,
+          status:
+            emergency.status === ReportStatus.OPEN
+              ? ReportStatus.CLOSED
+              : ReportStatus.OPEN,
+        }
         : emergency
     );
     setEmergencies(updatedEmergencies);
@@ -109,8 +109,7 @@ export default function EmergencyTable({
     const emergency = emergencies.find((e) => e.reportId === id);
     if (emergency) {
       console.log(
-        `${
-          emergency.status === ReportStatus.CLOSED ? "Clearing" : "Deleting"
+        `${emergency.status === ReportStatus.CLOSED ? "Clearing" : "Deleting"
         } emergency ${id}`
       );
       // Check if logged in
@@ -143,9 +142,9 @@ export default function EmergencyTable({
     const updatedEmergencies = emergencies.map((emergency) =>
       emergency.reportId === id
         ? {
-            ...emergency,
-            emergencyType: newType,
-          }
+          ...emergency,
+          emergencyType: newType,
+        }
         : emergency
     );
     setEmergencies(updatedEmergencies);
