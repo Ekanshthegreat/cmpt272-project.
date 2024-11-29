@@ -22,7 +22,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { EmergencyType, ReportStatus, Report } from "@/types/Report";
+import { EmergencyType, ReportStatus, Report } from "@/types/types";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -35,6 +35,27 @@ import {
 
 import dynamic from "next/dynamic";
 import { Modal } from "@/components/ui/modal";
+import { z } from "zod";
+import { phoneNumberSchema } from "@/types/types";
+
+const reportSchema = z.object({
+  reporterName: z.string().min(1, "Name is required"),
+  reporterPhone: phoneNumberSchema,
+  emergencyType: z.nativeEnum(EmergencyType, {
+    errorMap: () => ({ message: "Select a valid emergency type" }),
+  }),
+  location: z.object({
+    address: z.string().min(1, "Address is required"),
+    placeName: z.string().optional(),
+    coordinates: z.object({
+      latitude: z.number(),
+      longitude: z.number(),
+    }),
+  }),
+  pictureUrl: z.string().url().optional(),
+  comments: z.string().optional(),
+});
+
 const CMap = dynamic(() => import("@/components/coordMap"), {
   ssr: false,
 });
@@ -78,8 +99,15 @@ export default function ReportEmergency() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newReport: Report = {
-      ...formData,
+    const result = reportSchema.safeParse(formData);
+
+    if (!result.success) {
+      alert(result.error.errors[0].message);
+      return;
+    }
+
+    const newReport = {
+      ...result.data,
       reportId: uuidv4(),
       timeDate: new Date(),
       status: ReportStatus.OPEN,
