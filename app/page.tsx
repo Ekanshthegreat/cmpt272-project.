@@ -7,7 +7,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import EmergencyTable from "@/components/emergency-table";
 import { Separator } from "@/components/ui/separator";
 import DetailsCard from "@/components/details-card";
-import { Report, EmergencyType, ReportStatus } from "@/types/Report";
+import { Report, EmergencyType, ReportStatus } from "@/types/types";
 
 // Dynamically import MapContainer
 const Map = dynamic(() => import("@/components/map"), { ssr: false });

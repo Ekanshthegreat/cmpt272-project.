@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/app/login/auth-context";
-import { X, CheckCircle, Delete, Trash } from "lucide-react";
-import { Report, ReportStatus, EmergencyType } from "@/types/Report";
+import { Trash } from "lucide-react";
+import { Report, ReportStatus, EmergencyType } from "@/types/types";
 import Link from "next/link";
 import {
   AlertDialog,

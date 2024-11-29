@@ -1,3 +1,8 @@
+import { z } from "zod";
+import libphonenumber from "google-libphonenumber";
+
+const phoneUtil = libphonenumber.PhoneNumberUtil.getInstance();
+
 // Enum for emergency types
 export enum EmergencyType {
   FIRE = 'Fire',
@@ -44,3 +49,18 @@ export interface Report {
   timeDate: Date; // Time and date when the report was lodged
   status: ReportStatus; // Status of the report
 }
+
+export const phoneNumberSchema = z
+  .string()
+  .min(1, { message: "Mobile number is required" })
+  .refine(
+    (number) => {
+      try {
+        const phoneNumber = phoneUtil.parse(number, "CA"); // "CA" for Canada
+        return phoneUtil.isValidNumber(phoneNumber);
+      } catch (error) {
+        return false;
+      }
+    },
+    { message: "Invalid Canadian mobile number" }
+  );
