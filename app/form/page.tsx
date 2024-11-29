@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -52,7 +52,7 @@ const reportSchema = z.object({
       longitude: z.number(),
     }),
   }),
-  pictureUrl: z.string().url().optional(),
+  pictureUrl: z.string().url().optional().or(z.literal("")),
   comments: z.string().optional(),
 });
 
