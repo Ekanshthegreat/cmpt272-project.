@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/app/login/auth-context";
-import { X, CheckCircle } from "lucide-react";
+import { Trash } from "lucide-react";
 import { Report, ReportStatus, EmergencyType } from "@/types/types";
 import Link from "next/link";
 import {
@@ -33,18 +33,15 @@ import {
 } from "@/components/ui/select";
 
 interface EmergencyTableProps {
-  reports: Report[];
+  visibleReports: Report[];
   onReportClick: (id: string) => void;
   onReportUpdate: (updatedReports: Report[]) => void;
+  onReportDelete: (id: string) => void;
 }
 
 type SortOrder = "asc" | "desc";
 
-function sortByKey<T>(
-  array: T[],
-  key: keyof T,
-  order: SortOrder = "asc"
-): T[] {
+function sortByKey<T>(array: T[], key: keyof T, order: SortOrder = "asc"): T[] {
   return [...array].sort((a, b) => {
     const aValue = a[key];
     const bValue = b[key];
@@ -56,12 +53,13 @@ function sortByKey<T>(
 }
 
 export default function EmergencyTable({
-  reports,
+  visibleReports,
   onReportClick,
   onReportUpdate,
+  onReportDelete,
 }: EmergencyTableProps) {
   const { loggedIn } = useAuth();
-  const [emergencies, setEmergencies] = useState<Report[]>(reports);
+  const [emergencies, setEmergencies] = useState<Report[]>(visibleReports);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [emergencyToDelete, setEmergencyToDelete] = useState<string | null>(
@@ -71,8 +69,8 @@ export default function EmergencyTable({
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
   useEffect(() => {
-    setEmergencies(reports);
-  }, [reports]);
+    setEmergencies(visibleReports);
+  }, [visibleReports]);
 
   const handleSort = (column: keyof Report) => {
     const newSortOrder =
@@ -85,18 +83,18 @@ export default function EmergencyTable({
   };
 
   const handleStatusChange = (id: string) => {
-    console.log(`Toggling status for emergency ${id}`);
     const updatedEmergencies = emergencies.map((emergency) =>
       emergency.reportId === id
         ? {
-          ...emergency,
-          status:
-            emergency.status === ReportStatus.OPEN
-              ? ReportStatus.CLOSED
-              : ReportStatus.OPEN,
-        }
+            ...emergency,
+            status:
+              emergency.status === ReportStatus.OPEN
+                ? ReportStatus.CLOSED
+                : ReportStatus.OPEN,
+          }
         : emergency
     );
+
     setEmergencies(updatedEmergencies);
     localStorage.setItem(
       "emergencyReports",
@@ -109,7 +107,8 @@ export default function EmergencyTable({
     const emergency = emergencies.find((e) => e.reportId === id);
     if (emergency) {
       console.log(
-        `${emergency.status === ReportStatus.CLOSED ? "Clearing" : "Deleting"
+        `${
+          emergency.status === ReportStatus.CLOSED ? "Clearing" : "Deleting"
         } emergency ${id}`
       );
       // Check if logged in
@@ -124,17 +123,9 @@ export default function EmergencyTable({
 
   const confirmDelete = () => {
     if (emergencyToDelete) {
-      const updatedEmergencies = emergencies.filter(
-        (e) => e.reportId !== emergencyToDelete
-      );
-      setEmergencies(updatedEmergencies);
-      localStorage.setItem(
-        "emergencyReports",
-        JSON.stringify(updatedEmergencies)
-      );
+      onReportDelete(emergencyToDelete);
       setShowConfirmDialog(false);
       setEmergencyToDelete(null);
-      onReportUpdate(updatedEmergencies);
     }
   };
 
@@ -142,9 +133,9 @@ export default function EmergencyTable({
     const updatedEmergencies = emergencies.map((emergency) =>
       emergency.reportId === id
         ? {
-          ...emergency,
-          emergencyType: newType,
-        }
+            ...emergency,
+            emergencyType: newType,
+          }
         : emergency
     );
     setEmergencies(updatedEmergencies);
@@ -183,11 +174,7 @@ export default function EmergencyTable({
           </TableHeader>
           <TableBody>
             {emergencies.map((emergency) => (
-              <TableRow
-                className="cursor-pointer"
-                key={emergency.reportId}
-                onClick={() => onReportClick(emergency.reportId)}
-              >
+              <TableRow key={emergency.reportId}>
                 <TableCell>{emergency.location.address}</TableCell>
                 <TableCell>
                   {loggedIn ? (
@@ -231,6 +218,7 @@ export default function EmergencyTable({
                   <Button
                     variant="ghost"
                     className="text-muted-foreground hover:text-primary"
+                    onClick={() => onReportClick(emergency.reportId)}
                   >
                     MORE INFO
                   </Button>
@@ -240,17 +228,9 @@ export default function EmergencyTable({
                     variant="ghost"
                     size="icon"
                     onClick={() => handleDelete(emergency.reportId)}
-                    className={
-                      emergency.status === ReportStatus.CLOSED
-                        ? "text-green-500 hover:text-green-600"
-                        : "text-destructive hover:text-destructive"
-                    }
+                    className={"text-destructive hover:text-destructive"}
                   >
-                    {emergency.status === ReportStatus.CLOSED ? (
-                      <CheckCircle className="h-4 w-4" />
-                    ) : (
-                      <X className="h-4 w-4" />
-                    )}
+                    <Trash className="h-4 w-4" />
                   </Button>
                 </TableCell>
               </TableRow>
