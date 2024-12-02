@@ -96,7 +96,7 @@ export default function CardWithForm() {
   }
 
   return (
-    <div className="w-full flex flex-col items-center justify-center min-h-screen">
+    <div className=" w-full flex flex-col items-center justify-start mt-24">
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle>Admin Login</CardTitle>
