@@ -1,20 +1,26 @@
-# CMPT272 SFU Fall 2024 Project - Group 9
+# CMPT272 SFU Fall 2024 Project 🚀
 
-# Metro Vancouver 9-1-1 Emergency Call Web Application
+### Project Team Members
 
-This repository contains the web application project developed for the Metro Vancouver 9-1-1 Emergency Call Answer Service, in partnership with E-Comm, to streamline emergency reporting and response. This project aims to replace the legacy system with a user-friendly web-based solution for emergency call management.
+- Yecheng Wang
+- Ryota Kato
+- Atulya Mulhan
+- Pal Rohit Tilva
+- Ekansh Chawla
 
-## Project Overview
+### Metro Vancouver 9-1-1 Emergency Call Web Application 🚨
 
-The Metro Vancouver 9-1-1 Emergency Call Answer Service handles over one million emergency calls annually through E-Comm. This system enables both civilians and first responders to report, monitor, and manage emergency calls online, improving response efficiency and transparency.
+![Description of the image](project-screenshots/home1.png)
+![Description of the image](project-screenshots/home2.png)
+![Description of the image](project-screenshots/home3.png)
 
-## Scenario
+###### View more screenshots in the _project-screenshots_ folder
 
-The Metro Vancouver 9-1-1 Emergency Call Answer Service “is responsible for 9-1-1 call answer services within the Metro Vancouver region and provides this service through business partner and service provider: E-Comm. E-Comm receives and processes about one million emergency calls each year. They collect the required information from the caller and transfer the call to the appropriate municipal or provincial dispatch agency who is responsible to direct first responders to assist with the caller’s emergency.”
+This repository contains the web application project developed as a final project for CMPT272 at SFU, for the Metro Vancouver 9-1-1 Emergency Call Answer Service which aims to replace the legacy system with a user-friendly web-based solution for emergency call management.
 
-E-Comm has decided to switch from its legacy system to a web-based system that not only its operators and first responders, but also the public can use to easily report and monitor emergency calls online.
+## Project Overview 📚
 
-Your team has won a contract from E-Comm to build this web-based system. The system works as follows: anyone, including a civilian, can submit an emergency report containing the following:
+The Metro Vancouver 9-1-1 Emergency Call Answer Service enables both civilians and first responders to report, monitor, and manage emergency calls online, improving response efficiency and transparency.
 
 - **Reporting Person’s Info**: Name and phone number of the witness.
 - **Emergency Info**: Nature of the emergency (fire, shooting, vehicle accident, medical, etc.)
@@ -29,7 +35,7 @@ Upon submission, the system logs the report with the above details and auto-fill
 
 E-Comm operators review new reports and respond accordingly. After an emergency has been addressed, E-Comm operators update the report status to "RESOLVED," which requires a valid passcode (see below).
 
-## User Requirements
+## User Requirements 👤
 
 1. A map shall display all reported emergencies with markers. The list of all emergencies shall also be shown and is sortable. As the map is zoomed in or out, the list changes to show only the emergencies currently in the map. A possible design is shown in Figure 1, but you are free to be more creative.
 2. Interacting with a marker shall display the details, as shown in Figure 2. Again, you are free to be more creative.
@@ -39,19 +45,11 @@ E-Comm operators review new reports and respond accordingly. After an emergency 
 
 ## Non-Functional Requirements
 
-1. The app must be coded in HTML, CSS, and JavaScript. TypeScript is allowed.
-2. The MD5 hash shall be used for passcode storage and verification.
-3. You shall use the DOM Storage API to save your data.
-4. You shall use the Leaflet maps API with OpenStreetMaps to display the reports. Do NOT use MapBox or Google Maps, as they are not free to use.
-5. You can use libraries such as Bootstrap or frameworks such as React to help with the design process.
+- The MD5 hash shall be used for passcode storage and verification.
+- You shall use the DOM Storage API to save your data.
+- You shall use the Leaflet maps API with OpenStreetMaps to display the reports.
 
-## Other Info
-
-- Project is to be done in groups of 5 students each. Empty groups are already available on Canvas: just join one of them with your groupmates, or join any of the groups if you don’t have groupmates.
-- The exact designs and workflows are up to you, but please be mindful of usability and creativity: the app should be aesthetically pleasing and intuitive/easy to use.
-- Submit everything in one zip file, including a list of group members and their % share of contribution to the project. Each group member is expected to contribute equally (20%), impacting each individual's final project mark.
-
-### Resources
+### Resources 🔗
 
 - [Metro Vancouver 9-1-1 Service](https://metrovancouver.org/services/emergency-management/9-1-1-service)
 - [Hashify (MD5)](https://hashify.net/)
