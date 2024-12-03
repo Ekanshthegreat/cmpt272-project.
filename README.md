@@ -4,7 +4,7 @@
 
 - Yecheng Wang
 - Ryota Kato
-- Atulya Mulhan
+- Atulya Malhan
 - Pal Rohit Tilva
 - Ekansh Chawla
 
